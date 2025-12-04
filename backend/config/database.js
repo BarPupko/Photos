@@ -51,6 +51,34 @@ async function initDatabase() {
     // Column already exists, ignore error
   }
 
+  // Create albums table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS albums (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      description TEXT,
+      cover_photo_id INTEGER,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (cover_photo_id) REFERENCES photos(id) ON DELETE SET NULL
+    );
+  `);
+
+  // Create album_photos junction table (many-to-many relationship)
+  db.run(`
+    CREATE TABLE IF NOT EXISTS album_photos (
+      album_id INTEGER NOT NULL,
+      photo_id INTEGER NOT NULL,
+      added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (album_id, photo_id),
+      FOREIGN KEY (album_id) REFERENCES albums(id) ON DELETE CASCADE,
+      FOREIGN KEY (photo_id) REFERENCES photos(id) ON DELETE CASCADE
+    );
+  `);
+
+  db.run(`CREATE INDEX IF NOT EXISTS idx_album_photos_album ON album_photos(album_id);`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_album_photos_photo ON album_photos(photo_id);`);
+
   // Save database to file
   saveDatabase();
 

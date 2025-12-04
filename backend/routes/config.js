@@ -54,4 +54,59 @@ router.get('/', (req, res) => {
   }
 });
 
+// Update library path (writes to .env file)
+router.post('/library-path', (req, res) => {
+  try {
+    const { path: newPath } = req.body;
+
+    if (!newPath || typeof newPath !== 'string') {
+      return res.status(400).json({ error: 'Invalid path provided' });
+    }
+
+    // Check if path exists
+    if (!fs.existsSync(newPath)) {
+      return res.status(400).json({ error: 'Path does not exist' });
+    }
+
+    // Read current .env file
+    const envPath = path.join(__dirname, '..', '.env');
+    let envContent = '';
+
+    if (fs.existsSync(envPath)) {
+      envContent = fs.readFileSync(envPath, 'utf-8');
+    }
+
+    // Update or add PHOTO_LIBRARY_PATH
+    const lines = envContent.split('\n');
+    let pathUpdated = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith('PHOTO_LIBRARY_PATH=')) {
+        lines[i] = `PHOTO_LIBRARY_PATH=${newPath}`;
+        pathUpdated = true;
+        break;
+      }
+    }
+
+    if (!pathUpdated) {
+      lines.push(`PHOTO_LIBRARY_PATH=${newPath}`);
+    }
+
+    // Write back to .env file
+    fs.writeFileSync(envPath, lines.join('\n'));
+
+    // Update process.env for current session
+    process.env.PHOTO_LIBRARY_PATH = newPath;
+
+    res.json({
+      success: true,
+      photoLibraryPath: newPath,
+      message: 'Library path updated successfully. Restart server for changes to take full effect.'
+    });
+  } catch (error) {
+    console.error('Error updating library path:', error);
+    res.status(500).json({ error: 'Failed to update library path' });
+  }
+});
+
 module.exports = router;

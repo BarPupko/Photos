@@ -16,6 +16,7 @@ app.use('/thumbnails', express.static(path.join(__dirname, process.env.THUMBNAIL
 
 // Routes
 app.use('/api/photos', require('./routes/photos'));
+app.use('/api/albums', require('./routes/albums'));
 app.use('/api/config', require('./routes/config'));
 app.use('/api/scan', require('./routes/scan'));
 

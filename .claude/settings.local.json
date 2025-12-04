@@ -4,7 +4,11 @@
       "Bash(npm install:*)",
       "Bash(npm run dev:*)",
       "Bash(taskkill /PID 55092 /F)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(taskkill:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npx kill-port:*)"
     ],
     "deny": [],
     "ask": []
