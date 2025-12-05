@@ -365,7 +365,7 @@ router.get("/:id/optimized", async (req, res) => {
       return res.status(404).json({ error: "Photo file not found" });
     }
 
-    const maxSize = parseInt(req.query.maxSize) || 1500;
+    const maxSize = parseInt(req.query.maxSize) || 1280;
 
     // Cache optimized images to disk for instant loading
     const optimizedDir = path.join(__dirname, "..", "optimized");
@@ -388,14 +388,14 @@ router.get("/:id/optimized", async (req, res) => {
     // Generate and cache optimized version
     const image = await Jimp.read(photo.filepath);
 
-    // Resize to small size for very fast loading
-    const smallSize = 800; // Much smaller than before
-    if (image.bitmap.width > smallSize || image.bitmap.height > smallSize) {
-      image.scaleToFit(smallSize, smallSize);
+    // Resize to 1280px for high quality lightbox viewing
+    const targetSize = 1280;
+    if (image.bitmap.width > targetSize || image.bitmap.height > targetSize) {
+      image.scaleToFit(targetSize, targetSize);
     }
 
-    // Use 50% quality for very fast loading and small file size
-    await image.quality(50).writeAsync(optimizedPath);
+    // Use 80% quality for excellent image quality
+    await image.quality(80).writeAsync(optimizedPath);
 
     res.sendFile(optimizedPath);
   } catch (error) {
@@ -449,13 +449,13 @@ router.get("/:id/thumbnail", async (req, res) => {
     // Generate and cache thumbnail (optimized for speed)
     const image = await Jimp.read(photo.filepath);
 
-    // Resize to very small size for fast loading
-    if (image.bitmap.width > 200 || image.bitmap.height > 200) {
-      image.scaleToFit(200, 200);
+    // Resize to 500px for better quality thumbnails
+    if (image.bitmap.width > 500 || image.bitmap.height > 500) {
+      image.scaleToFit(500, 500);
     }
 
-    // Create 200x200 thumbnail with 20% quality (very fast, very small files)
-    await image.cover(200, 200).quality(20).writeAsync(thumbnailPath);
+    // Create 500x500 thumbnail with 60% quality (good balance of quality and file size)
+    await image.cover(500, 500).quality(60).writeAsync(thumbnailPath);
 
     res.set("Cache-Control", "public, max-age=31536000");
     res.sendFile(thumbnailPath);

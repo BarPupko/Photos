@@ -1250,8 +1250,8 @@ export default {
     };
 
     const getLightboxPhotoUrl = (photo) => {
-      // Use optimized endpoint with very small size (800px) for fast loading
-      return `/api/photos/${photo.id}/optimized?maxSize=800`;
+      // Use optimized endpoint with 1280px for high quality lightbox viewing
+      return `/api/photos/${photo.id}/optimized?maxSize=1280`;
     };
 
     const togglePhotoSelection = (photoId, event) => {
@@ -2561,7 +2561,7 @@ export default {
 
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
 }
 
@@ -2734,7 +2734,7 @@ export default {
 
 .skeleton-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
   margin-bottom: 1rem;
 }
